@@ -274,7 +274,8 @@ jobs:
            echo "Kernel output file is empty"
            exit 1
        fi
-        if [ ${{ env.NEED_DTB }} = true ]; then
+       if [ ${{ env.NEED_DTB }} = true ]; then
+           find android-kernel/out/arch/${{ env.ARCH }}/boot/dts -name '*.dtb' -exec cat {} + > android-kernel/out/arch/${{ env.ARCH }}/boot/dtb
            if [ -f android-kernel/out/arch/${{ env.ARCH }}/boot/dtb ]; then
                echo "CHECK_DTB_IS_OK=true" >> $GITHUB_ENV
            else
