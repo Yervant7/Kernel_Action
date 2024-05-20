@@ -58,6 +58,8 @@ jobs:
         echo "KSU_EXPECTED_HASH=$(cat $CONFIG_ENV | grep -w "KSU_EXPECTED_HASH" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "REMOVE_UNUSED_PACKAGES=$(cat $CONFIG_ENV | grep -w "REMOVE_UNUSED_PACKAGES" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "REMOVE_MODULE_VERIFY=$(cat $CONFIG_ENV | grep -w "REMOVE_MODULE_VERIFY" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "DEVICE_CFG=$(cat $CONFIG_ENV | grep -w "DEVICE_CFG" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+
 
     - name: Remove unused packages
       if: env.REMOVE_UNUSED_PACKAGES == 'true'
@@ -239,6 +241,11 @@ jobs:
             sed -i 's/CONFIG_MODULE_SRCVERSION_ALL=y/CONFIG_MODULE_SRCVERSION_ALL=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_MODULE_SIG=y/CONFIG_MODULE_SIG=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_MODULE_SIG_SHA512=y/CONFIG_MODULE_SIG_SHA512=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
+        fi
+        if [ ${{ env.DEVICE_CFG }} = true ]; then
+            rm -f arch/${{ env.ARCH }}/boot/Makefile
+            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/arm64/boot
+            wget https://raw.githubusercontent.com/Rohail33/Realking_kernel_sm8250/main/arch/arm64/boot/Makefile
         fi
 
     - name: Setup ccache
