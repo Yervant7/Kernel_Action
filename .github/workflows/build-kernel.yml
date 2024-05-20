@@ -58,6 +58,7 @@ jobs:
         echo "KSU_EXPECTED_HASH=$(cat $CONFIG_ENV | grep -w "KSU_EXPECTED_HASH" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "REMOVE_UNUSED_PACKAGES=$(cat $CONFIG_ENV | grep -w "REMOVE_UNUSED_PACKAGES" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "REMOVE_MODULE_VERIFY=$(cat $CONFIG_ENV | grep -w "REMOVE_MODULE_VERIFY" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "DEVICE_CFG=$(cat $CONFIG_ENV | grep -w "DEVICE_CFG" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
 
     - name: Remove unused packages
       if: env.REMOVE_UNUSED_PACKAGES == 'true'
@@ -240,6 +241,12 @@ jobs:
             sed -i 's/CONFIG_MODULE_SIG=y/CONFIG_MODULE_SIG=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_MODULE_SIG_SHA512=y/CONFIG_MODULE_SIG_SHA512=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
         fi
+        if [ ${{ env.DEVICE_CFG }} = true ]; then
+            #add your device config(not defconfig) if need
+            rm -f arch/${{ env.ARCH }}/boot/Makefile
+            cd arch/${{ env.ARCH }}/boot
+            wget https://raw.githubusercontent.com/Rohail33/Realking_kernel_sm8250/main/arch/arm64/boot/Makefile
+        fi
 
     - name: Setup ccache
       if: env.ENABLE_CCACHE == 'true'
@@ -275,7 +282,6 @@ jobs:
            exit 1
        fi
        if [ ${{ env.NEED_DTB }} = true ]; then
-           find android-kernel/out/arch/${{ env.ARCH }}/boot/dts -name '*.dtb' -exec cat {} + > android-kernel/out/arch/${{ env.ARCH }}/boot/dtb
            if [ -f android-kernel/out/arch/${{ env.ARCH }}/boot/dtb ]; then
                echo "CHECK_DTB_IS_OK=true" >> $GITHUB_ENV
            else
