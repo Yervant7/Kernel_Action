@@ -209,9 +209,10 @@ jobs:
       if: env.REMOVE_KSU_PATCH == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        rm -rf KernelSU drivers/kernelsu
         chmod +x $GITHUB_WORKSPACE/patches/removepatch.sh
         bash $GITHUB_WORKSPACE/patches/removepatch.sh
-
+        
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
@@ -246,6 +247,7 @@ jobs:
             echo "CONFIG_MODULES=y" >> arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             echo "CONFIG_MODULE_FORCE_LOAD=y" >> arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             echo "CONFIG_MODULE_UNLOAD=y" >> arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
+            echo "TRIM_UNUSED_KSYMS=y" >> arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_MODVERSIONS=y/CONFIG_MODVERSIONS=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_MODULE_SRCVERSION_ALL=y/CONFIG_MODULE_SRCVERSION_ALL=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_MODULE_SIG=y/CONFIG_MODULE_SIG=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
