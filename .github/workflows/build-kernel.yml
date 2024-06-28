@@ -59,6 +59,7 @@ jobs:
         echo "REMOVE_UNUSED_PACKAGES=$(cat $CONFIG_ENV | grep -w "REMOVE_UNUSED_PACKAGES" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "REMOVE_MODULE_VERIFY=$(cat $CONFIG_ENV | grep -w "REMOVE_MODULE_VERIFY" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "DEVICE_CFG=$(cat $CONFIG_ENV | grep -w "DEVICE_CFG" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "ADD_RWMEM=$(cat $CONFIG_ENV | grep -w "ADD_RWMEM" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
 
 
     - name: Remove unused packages
@@ -250,6 +251,14 @@ jobs:
             cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/arm64/boot
             wget https://raw.githubusercontent.com/Rohail33/Realking_kernel_sm8250/main/arch/arm64/boot/Makefile
         fi
+        if [ ${{ env.ADD_RWMEM }} = true ]; then
+            cd drivers/
+            wget https://github.com/Yervant7/rwMem/releases/download/0.1.2/rwmem.zip
+            unzip rwmem.zip
+            cd rwmem
+            chmod +x setup.sh
+            ./setup.sh
+        fi
 
     - name: Setup ccache
       if: env.ENABLE_CCACHE == 'true'
@@ -297,6 +306,14 @@ jobs:
                echo "CHECK_DTBO_IS_OK=true" >> $GITHUB_ENV
            else
                echo "DTBO image is empty"
+               exit 1
+           fi
+       fi
+       if [ ${{ env.ADD_RWMEM }} = true ]; then
+           if [ -f android-kernel/out/drivers/rwmem/rwmem.ko ]; then
+               echo "CHECK_RWMEM_IS_OK=true" >> $GITHUB_ENV
+           else
+               echo "RWMEM is empty"
                exit 1
            fi
        fi
@@ -379,6 +396,13 @@ jobs:
       with:
         name: dtbo-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
         path: kernel_workspace/android-kernel/out/arch/${{ env.ARCH }}/boot/dtbo.img
+
+    - name: Upload RWMEM module
+      if: env.CHECK_RWMEM_IS_OK == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: rwmem-${{ env.DEVICE }}
+        path: kernel_workspace/android-kernel/out/drivers/rwmem/rwmem.ko
 
     - name: Upload boot image
       if: env.MAKE_BOOT_IMAGE_IS_OK == 'true'
