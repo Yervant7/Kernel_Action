@@ -244,12 +244,9 @@ jobs:
             sed -i 's/CONFIG_MODULE_SIG_SHA512=y/CONFIG_MODULE_SIG_SHA512=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
         fi
         if [ ${{ env.DEVICE_CFG }} = true ]; then
-            rm -f arch/${{ env.ARCH }}/boot/Makefile
-            rm -f arch/${{ env.ARCH }}/Makefile
-            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/arm64
-            wget https://raw.githubusercontent.com/Rohail33/Realking_kernel_sm8250/main/arch/arm64/Makefile
-            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/arm64/boot
-            wget https://raw.githubusercontent.com/Rohail33/Realking_kernel_sm8250/main/arch/arm64/boot/Makefile
+            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+            sed -i 's/qcom,mdss-pan-physical-width-dimension = <70>;$/qcom,mdss-pan-physical-width-dimension = <700>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
+            sed -i 's/qcom,mdss-pan-physical-height-dimension = <155>;$/qcom,mdss-pan-physical-height-dimension = <1540>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
         fi
         if [ ${{ env.ADD_RWMEM }} = true ]; then
             cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/drivers/
