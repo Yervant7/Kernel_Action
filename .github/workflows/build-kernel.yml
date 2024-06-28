@@ -252,7 +252,7 @@ jobs:
             wget https://raw.githubusercontent.com/Rohail33/Realking_kernel_sm8250/main/arch/arm64/boot/Makefile
         fi
         if [ ${{ env.ADD_RWMEM }} = true ]; then
-            cd drivers/
+            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/drivers/
             wget https://github.com/Yervant7/rwMem/releases/download/0.1.2/rwmem.zip
             unzip rwmem.zip
             cd rwmem
