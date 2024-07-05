@@ -256,6 +256,7 @@ jobs:
         if [ ${{ env.DEVICE_CFG }} = true ]; then
             cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu
             tar -xvf a03_s6.tar.xz
+            chmod +x ./bin/mgskbt
             ./bin/mgskbt unpack boot.img
             rm $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu/kernel -f
             cp ../out/arch/arm64/boot/Image $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu/kernel
