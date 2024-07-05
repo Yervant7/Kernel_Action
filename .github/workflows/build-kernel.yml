@@ -254,9 +254,14 @@ jobs:
             sed -i 's/CONFIG_MODULE_SIG_SHA512=y/CONFIG_MODULE_SIG_SHA512=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
         fi
         if [ ${{ env.DEVICE_CFG }} = true ]; then
-            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-            sed -i 's/qcom,mdss-pan-physical-width-dimension = <70>;$/qcom,mdss-pan-physical-width-dimension = <700>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
-            sed -i 's/qcom,mdss-pan-physical-height-dimension = <155>;$/qcom,mdss-pan-physical-height-dimension = <1540>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
+            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu
+            tar -xvf a03_s6.tar.xz
+            ./bin/mgskbt unpack boot.img
+            rm $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu/kernel -f
+            cp ../out/arch/arm64/boot/Image $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu/kernel
+            ./bin/mgskbt repack boot.img new-boot.img
+            lz4 -B6 --content-size new-boot.img new-boot.img.lz4
+            rm $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu/kernel && rm $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu/ramdisk.cpio && rm $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu/dtb && rm $GITHUB_WORKSPACE/kernel_workspace/android-kernel/Rissu/boot.img
         fi
         if [ ${{ env.ADD_RWMEM }} = true ]; then
             cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/drivers/
@@ -416,4 +421,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: boot${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
-        path: kernel_workspace/boot.img
+        path: kernel_workspace/android-kernel/Rissu/new-boot.img.lz4
