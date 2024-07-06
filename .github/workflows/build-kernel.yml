@@ -255,7 +255,7 @@ jobs:
         fi
         if [ ${{ env.ADD_RWMEM }} = true ]; then
             cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/drivers/
-            wget https://github.com/Yervant7/rwMem/releases/download/0.1.2/rwmem.zip
+            wget https://github.com/Yervant7/rwMem/releases/download/0.1.7/rwmem.zip
             unzip rwmem.zip
             cd rwmem
             chmod +x setup.sh
