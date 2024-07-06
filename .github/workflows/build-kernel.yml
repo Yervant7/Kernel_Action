@@ -252,6 +252,18 @@ jobs:
             sed -i 's/CONFIG_MODULE_SIG=y/CONFIG_MODULE_SIG=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_MODULE_SIG_SHA512=y/CONFIG_MODULE_SIG_SHA512=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
         fi
+        if [ ${{ env.DEVICE_CFG }} = true ]; then
+            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/tools
+            git clone https://gitlab.com/Rissu-Projekt/additional.git lib64
+            cd lib64
+            tar -xvf part01.tar.xz && rm part01.tar.xz
+            tar -xvf part02.tar.xz && rm part02.tar.xz
+            tar -xvf part03.tar.xz && rm part03.tar.xz
+            tar -xvf part04.tar.xz && rm part04.tar.xz
+            tar -xvf part05.tar.xz && rm part05.tar.xz
+            tar -xvf part06.tar.xz && rm part06.tar.xz
+            tar -xvf part07.tar.xz && rm part07.tar.xz
+        fi
         if [ ${{ env.ADD_RWMEM }} = true ]; then
             cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/drivers/
             wget https://github.com/Yervant7/rwMem/releases/download/0.1.7/rwmem.zip
