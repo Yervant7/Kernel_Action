@@ -1,0 +1,6 @@
+config FENCEFDMOD
+	tristate "fenceFd module support"
+	default m
+	help
+	  Enable module fenceFd
+	  
