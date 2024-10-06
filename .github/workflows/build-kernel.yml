@@ -220,6 +220,7 @@ jobs:
         if [ ${{ env.ADD_FENCEFD }} = true ]; then
            cp -r $GITHUB_WORKSPACE/patches/fenceFd_module $GITHUB_WORKSPACE/kernel_workspace/android-kernel/drivers
            cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/drivers/fenceFd_module
+           chmod +x setup.sh
            ./setup.sh
         fi
         if [ ${{ env.ADD_KPROBES_CONFIG }} = true -a ${{ env.APPLY_KSU_PATCH }} != true ]; then
